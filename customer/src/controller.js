@@ -2,12 +2,14 @@ const service = require('./service')
 
 exports.create = async (req, res, next) => {
     try {
-        const customer = await service.create(email, first_name, last_name, address, password)
+        const {email, name, address, password} = req.body
+        const customer = await service.create(email, name, address, password)
     
         res.status(201).send(customer)
     } catch (error) {
-        console.log(error)
-        next()  
+        res.status(400).json({
+            message: error.message,
+        })
     }
 }
 
