@@ -12,10 +12,29 @@ app.get('/', (req, res) => {
 })
 
 
-app.post('/', async (req, res) => {
-    console.log(req.body)
+const payments = []
 
-    res.send('done')
+app.post('/', async (req, res) => {
+try {
+    const {order_id, amount, payment_method, payment_date, customer_id, isComplete} = req.body
+
+    payments.push({
+        id: payments.length + 1,
+        customer_id,
+        order_id,
+        amount,
+        payment_date,
+        payment_method,
+        isComplete
+    })
+
+    console.log(req.body)
+    console.log(payments)
+    res.status(201).json({payment: payments[payments.length - 1]})
+} catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+}
 })
 
 

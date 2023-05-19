@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
 
 const PORT = 3001
 const app = express()
@@ -45,11 +46,22 @@ app.post('/checkout', async(req, res) => {
 
         //3) set timeout for 5 seconds to simulate payment
         delay(5000)
+        const payment = await axios.post('http://localhost:3002', {
+            order_id: orders[orders.length - 1].id, 
+            amount: 500, 
+            payment_method: 'debit card', 
+            payment_date: new Date(), 
+            customer_id: customer.id, 
+            isComplete: true
+        })
 
+        console.log(payment)
         //4) add payment to billing service
 
+
         res.status(201).json({
-            order: orders[orders.length - 1]
+            order: orders[orders.length - 1],
+            payment: payment.data.payment
         })
     } catch (error) {
         return res.status(400).json({message: error.message})
