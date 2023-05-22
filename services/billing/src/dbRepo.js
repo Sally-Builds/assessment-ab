@@ -12,8 +12,7 @@ exports.create = async (customer_id, order_id, amount, isCompleted, payment_meth
     try {
     let formattedDate = formatDate(payment_date)
     const sql = "INSERT INTO billings (customer_id, order_id, amount, isCompleted, payment_method, payment_date) VALUES (?, ?, ?, ?, ?, ?)"
-    const [data] = await pool.query(sql, [customer_id, order_id, amount, isCompleted, payment_method, formattedDate])
-    console.log(data)
+    await pool.query(sql, [customer_id, order_id, amount, isCompleted, payment_method, formattedDate])
     return 'successful'
     } catch (error) {
         console.log(error)
@@ -32,8 +31,21 @@ const formatDate = (value) => {
     return `${year}-${month}-${date} ${time}`
 }
 
-exports.getUserWithEmail = async (email) => {
-    const sql = `SELECT * FROM customers WHERE email = ?`
-    const [data] = await pool.query(sql, [email])
+exports.getBillingInfo = async (order_id) => {
+    const sql = `SELECT * FROM billings WHERE order_id = ?`
+    const [data] = await pool.query(sql, [order_id])
     return data[0]
+}
+
+exports.update = async (id, amount) => {
+    try {
+        console.log(amount)
+        const sql = "UPDATE billings SET amount = ?, isCompleted = 1 WHERE id = ?"
+    await pool.query(sql, [amount, id])
+    console.log('success')
+    return 'payment completed'
+    } catch (error) {
+        console.log(error)
+        throw new Error(error)
+    }
 }

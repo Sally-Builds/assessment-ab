@@ -12,8 +12,6 @@ exports.create = async (customer_id, qty, price, total, status) => {
     try {
     const sql = "INSERT INTO orders (customer_id, qty ,price, total, status) VALUES (?, ?, ?, ?, ?)"
     const [data] = await pool.query(sql, [customer_id, qty, price, total, status])
-    console.log(data.insertId)
-    return data.insertId
     } catch (error) {
         throw new Error(error)
     }
@@ -21,16 +19,17 @@ exports.create = async (customer_id, qty, price, total, status) => {
 
 exports.findOne = async (id) => {
     try {
-        const sql = `SELECT * FROM customers WHERE id = ?`
+        const sql = `SELECT * FROM orders WHERE id = ?`
         const [data] = await pool.query(sql, [id])
-        return data
+        return data[0]
 } catch (error) {
         throw new Error(error)
     }
 }
 
-exports.getUserWithEmail = async (email) => {
-    const sql = `SELECT * FROM customers WHERE email = ?`
-    const [data] = await pool.query(sql, [email])
-    return data[0]
+exports.updateStatus = async (id, status) => {
+    const sql = `UPDATE orders SET status = ? WHERE id = ?`
+    const [result] = await pool.query(sql, [status, id])
+
+    return result
 }

@@ -26,7 +26,7 @@ createTable = async () => {
     }).promise()
         var sql = `CREATE TABLE 
         IF NOT EXISTS 
-        billings (payment_method VARCHAR(255) NOT NULL, payment_date TIMESTAMP NOT NULL, customer_id int NOT NULL, order_id int NOT NULL, amount int NOT NULL, isCompleted VARCHAR(255) NOT NULL, id int AUTO_INCREMENT, PRIMARY KEY(id))`;
+        billings (payment_method VARCHAR(255) NOT NULL, payment_date TIMESTAMP NOT NULL, customer_id int NOT NULL, order_id int NOT NULL, amount int NOT NULL, isCompleted TINYINT NOT NULL, id int AUTO_INCREMENT, PRIMARY KEY(id))`;
         await pool.query(sql)
         console.log(`billing TABLE created successfully!!`)
     } catch (error) {

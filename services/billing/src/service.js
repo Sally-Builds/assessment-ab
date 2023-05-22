@@ -10,10 +10,11 @@ const delay = (ms) => {
 
 exports.create = async (customer_id, order_id, amount, isCompleted, payment_method, payment_date) => {
     try {
+        const isBilling = await db.getBillingInfo(order_id)
+        if(isBilling) throw new Error("order already payed")
         delay(5000)
         const billing = await db.create(customer_id, order_id, amount, isCompleted, payment_method, payment_date)
 
-        console.log(billing)
         return billing
     } catch (error) {
         console.log(error)
@@ -21,19 +22,21 @@ exports.create = async (customer_id, order_id, amount, isCompleted, payment_meth
     }
 }
 
-exports.login = async (email, password) => {
+exports.getBilling = async (order_id) => {
     try {
-        const customer = await db.getUserWithEmail(email)
+        const billing = await db.getBillingInfo(order_id)
     
-        if(!customer) throw new Error('incorrect email or password')
+        return billing
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+exports.completeBillingPayment = async (id, amount) => {
+    try {
+        const message = await db.update(id, amount)
     
-        if(!(await bcrypt.compare(password, customer.password))) {
-            throw new Error('incorrect email or password')
-        }
-    
-        let token =  jwt.sign({id: customer.id}, process.env.JWT_SECRET, {expiresIn: '30d'})
-    
-        return {customer: {...customer, password: undefined}, token}
+        return message
     } catch (error) {
         throw new Error(error)
     }
